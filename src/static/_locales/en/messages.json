@@ -1,0 +1,19 @@
+{
+  "extensionName": { "message": "YouTube AI Marker" },
+  "extensionDescription": { "message": "Marks or filters videos that YouTube officially discloses as made with AI." },
+  "badgeLabel": { "message": "AI disclosed" },
+  "filterMode": { "message": "Filter mode" },
+  "modeMark": { "message": "Mark only" },
+  "modeBlur": { "message": "Blur" },
+  "modeHide": { "message": "Hide" },
+  "checked": { "message": "Checked" },
+  "marked": { "message": "AI disclosed" },
+  "hidden": { "message": "Hidden" },
+  "clearCache": { "message": "Clear decision cache" },
+  "cacheCleared": { "message": "Cache cleared" },
+  "privacyNote": { "message": "No viewing data leaves your browser. Unknown videos are never filtered." },
+  "statusOk": { "message": "Disclosure check is working" },
+  "statusDegraded": { "message": "Some disclosure checks failed" },
+  "statusUnavailable": { "message": "Status is unavailable" },
+  "openYouTube": { "message": "Open a YouTube page to use this extension" }
+}

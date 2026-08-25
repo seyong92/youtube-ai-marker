@@ -1,0 +1,29 @@
+.yam-ai-badge {
+  position: absolute;
+  z-index: 50;
+  top: 8px;
+  left: 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  box-sizing: border-box;
+  padding: 3px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 5px;
+  background: rgba(18, 18, 18, 0.9);
+  color: #fff;
+  font: 600 12px/1.2 Roboto, Arial, sans-serif;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+.yam-ai-blurred ytd-thumbnail img,
+.yam-ai-blurred a#thumbnail img,
+.yam-ai-blurred .yt-lockup-view-model__content-image img {
+  filter: blur(16px) brightness(0.68);
+  transform: scale(1.04);
+}
+
+.yam-ai-hidden {
+  display: none !important;
+}

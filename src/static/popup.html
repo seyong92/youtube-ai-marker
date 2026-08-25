@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="popup.css">
+    <title>YouTube AI Marker</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1 data-i18n="extensionName">YouTube AI Marker</h1>
+        <p id="status" class="status" data-i18n="statusUnavailable">Checking status…</p>
+      </header>
+
+      <fieldset>
+        <legend data-i18n="filterMode">Filter mode</legend>
+        <label><input type="radio" name="mode" value="mark"><span data-i18n="modeMark">Mark only</span></label>
+        <label><input type="radio" name="mode" value="blur"><span data-i18n="modeBlur">Blur</span></label>
+        <label><input type="radio" name="mode" value="hide"><span data-i18n="modeHide">Hide</span></label>
+      </fieldset>
+
+      <section class="stats" aria-label="Page statistics">
+        <div><strong id="checked-count">–</strong><span data-i18n="checked">Checked</span></div>
+        <div><strong id="marked-count">–</strong><span data-i18n="marked">AI disclosed</span></div>
+        <div><strong id="hidden-count">–</strong><span data-i18n="hidden">Hidden</span></div>
+      </section>
+
+      <button id="clear-cache" type="button" data-i18n="clearCache">Clear decision cache</button>
+      <p class="privacy" data-i18n="privacyNote">No viewing data leaves your browser. Unknown videos are never filtered.</p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

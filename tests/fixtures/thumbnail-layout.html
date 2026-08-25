@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      ytd-video-renderer { display: block; width: 320px; }
+      ytd-thumbnail { position: relative; display: block; width: 320px; height: 180px; }
+      a#thumbnail { position: absolute; inset: 0; display: block; }
+      a#thumbnail img { position: absolute; inset: 0; width: 100%; height: 100%; }
+    </style>
+    <link rel="stylesheet" href="../../src/static/content.css">
+  </head>
+  <body>
+    <ytd-video-renderer class="yam-ai-card">
+      <ytd-thumbnail>
+        <a id="thumbnail"><img alt="fixture"></a>
+      </ytd-thumbnail>
+    </ytd-video-renderer>
+    <script>
+      const anchor = document.querySelector("#thumbnail");
+      const image = document.querySelector("img");
+      const result = {
+        anchorPosition: getComputedStyle(anchor).position,
+        anchorHeight: anchor.getBoundingClientRect().height,
+        imageHeight: image.getBoundingClientRect().height,
+      };
+      document.body.dataset.layoutResult = result.imageHeight >= 180 ? "pass" : "fail";
+      document.querySelector("img").alt = JSON.stringify(result);
+    </script>
+  </body>
+</html>
