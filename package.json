@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "npm run icons && node scripts/build.mjs",
+    "icons": "node scripts/generate-icons.mjs",
     "check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -14,6 +15,7 @@
     "@types/node": "^24.0.0",
     "esbuild": "^0.25.9",
     "jsdom": "^26.1.0",
+    "sharp": "^0.35.3",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

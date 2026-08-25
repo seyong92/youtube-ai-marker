@@ -30,6 +30,6 @@ await Promise.all([
   }),
 ]);
 
-for (const item of ["manifest.json", "content.css", "popup.html", "popup.css", "_locales"]) {
+for (const item of ["manifest.json", "content.css", "popup.html", "popup.css", "_locales", "icons"]) {
   await cp(path.join(root, "src/static", item), path.join(dist, item), { recursive: true });
 }

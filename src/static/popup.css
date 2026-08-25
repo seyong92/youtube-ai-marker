@@ -12,6 +12,8 @@ body {
 
 main { padding: 18px; }
 h1 { margin: 0 0 5px; font-size: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand img { flex: 0 0 auto; border-radius: 8px; }
 .status { margin: 0; color: #73d990; font-size: 12px; }
 .status.warning { color: #ffbd5b; }
 

@@ -40,6 +40,18 @@ This is an undocumented YouTube web response, so it can change. The parser is is
 
 The extension makes requests only to the YouTube origin already being viewed. It stores filter settings and a bounded, expiring video-ID decision cache in Chrome local storage. It has no analytics, telemetry, account system, or external backend.
 
+## Icon assets
+
+The hand-authored vector source is `src/static/icons/icon.svg`. It uses fixed geometric paths and a flat palette: charcoal `#202124`, signal red `#e62117`, and warm white `#f7f7f5`.
+
+Chrome does not support SVG files for manifest or toolbar icons, so deterministic 16, 32, 48, and 128 pixel PNG exports are generated from the SVG:
+
+```sh
+npm run icons
+```
+
+The regular build runs this export automatically and copies both the source SVG and PNG assets into `dist/icons`.
+
 ## License
 
 MIT

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">YouTube AI Marker</title>
+  <desc id="desc">Dark AI initials crossed by a red circle and slash</desc>
+  <rect x="7" y="7" width="114" height="114" rx="27" fill="#f7f7f5" stroke="#d9d9d4" stroke-width="4"/>
+  <path fill="#202124" fill-rule="evenodd" d="M27 86 44 41h14l17 45H62l-3-10H43l-3 10H27Zm20-21h9l-4.5-14L47 65Z"/>
+  <path fill="#202124" d="M78 41h23v11h-5v23h5v11H78V75h5V52h-5V41Z"/>
+  <circle cx="64" cy="64" r="49" fill="none" stroke="#e62117" stroke-width="9"/>
+  <path d="m30 98 68-68" fill="none" stroke="#e62117" stroke-width="11" stroke-linecap="round"/>
+</svg>
