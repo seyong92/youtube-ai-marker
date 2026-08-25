@@ -2,7 +2,7 @@ import type { CacheEntry, DisclosureStatus, Settings } from "./types";
 import { DEFAULT_SETTINGS } from "./types";
 
 const SETTINGS_KEY = "yam:settings:v1";
-const CACHE_KEY = "yam:cache:v1";
+const CACHE_KEY = "yam:cache:v2";
 const MAX_CACHE_ENTRIES = 2_000;
 
 const TTL: Record<DisclosureStatus, number> = {

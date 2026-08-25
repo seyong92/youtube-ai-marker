@@ -4,17 +4,24 @@ const CARD_SELECTORS = [
   "ytd-grid-video-renderer",
   "ytd-compact-video-renderer",
   "ytd-playlist-video-renderer",
+  "ytd-reel-item-renderer",
+  "ytm-shorts-lockup-view-model-v2",
 ].join(",");
 
 const VIDEO_LINK_SELECTORS = [
   "a#thumbnail[href*='/watch']",
+  "a.reel-item-endpoint[href*='/shorts/']",
   "a#video-title[href*='/watch']",
+  "a[href*='/shorts/']",
   "a.yt-lockup-view-model__content-image[href*='/watch']",
 ].join(",");
+
+export type MediaKind = "video" | "short";
 
 export interface VideoCard {
   element: HTMLElement;
   videoId: string;
+  kind: MediaKind;
 }
 
 export function discoverVideoCards(root: ParentNode = document): VideoCard[] {
@@ -32,19 +39,43 @@ export function discoverVideoCards(root: ParentNode = document): VideoCard[] {
       if (card) elements.add(card);
     });
 
+  // Shorts lockups are view models too, and their outer v2 wrapper is the
+  // complete card that should be hidden when filtering is enabled.
+  root.querySelectorAll<HTMLAnchorElement>("a.reel-item-endpoint[href*='/shorts/']")
+    .forEach((link) => {
+      const card = link.closest<HTMLElement>("ytm-shorts-lockup-view-model-v2")
+        ?? link.closest<HTMLElement>("ytm-shorts-lockup-view-model");
+      if (card) elements.add(card);
+    });
+
   return [...elements].flatMap((element) => {
     const link = element.querySelector<HTMLAnchorElement>(VIDEO_LINK_SELECTORS);
-    const videoId = link ? getVideoId(link.href) : null;
-    return videoId ? [{ element, videoId }] : [];
+    const media = link ? getMediaReference(link.href) : null;
+    return media ? [{ element, ...media }] : [];
   });
 }
 
 export function getVideoId(href: string): string | null {
+  return getMediaReference(href)?.videoId ?? null;
+}
+
+export function getMediaReference(href: string): { videoId: string; kind: MediaKind } | null {
   try {
     const url = new URL(href, location.origin);
-    if (url.pathname !== "/watch") return null;
-    const videoId = url.searchParams.get("v");
-    return videoId && /^[A-Za-z0-9_-]{11}$/.test(videoId) ? videoId : null;
+    let videoId: string | null = null;
+    let kind: MediaKind;
+
+    if (url.pathname === "/watch") {
+      videoId = url.searchParams.get("v");
+      kind = "video";
+    } else {
+      const match = url.pathname.match(/^\/shorts\/([A-Za-z0-9_-]{11})\/?$/);
+      if (!match) return null;
+      videoId = match[1];
+      kind = "short";
+    }
+
+    return videoId && /^[A-Za-z0-9_-]{11}$/.test(videoId) ? { videoId, kind } : null;
   } catch {
     return null;
   }
@@ -52,6 +83,7 @@ export function getVideoId(href: string): string | null {
 
 export function findThumbnail(card: HTMLElement): HTMLElement | null {
   return card.querySelector<HTMLElement>("a#thumbnail")
+    ?? card.querySelector<HTMLElement>("a.reel-item-endpoint[href*='/shorts/']")
     ?? card.querySelector<HTMLElement>(".yt-lockup-view-model__content-image")
     ?? card.querySelector<HTMLElement>("ytd-thumbnail");
 }

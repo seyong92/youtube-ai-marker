@@ -28,6 +28,25 @@ export function classifyWatchHtml(html: string): DisclosureStatus {
   return foundWatchMetadata ? "not-ai" : "unknown";
 }
 
+export function classifyShortsHtml(html: string, videoId: string): DisclosureStatus {
+  const initialData = extractInitialData(html);
+  if (!initialData || !isRecord(initialData)) return "unknown";
+
+  let foundTargetVideo = false;
+  let foundAiDisclosure = false;
+
+  walk(initialData, (key, value) => {
+    if (key === "videoId" && value === videoId) foundTargetVideo = true;
+    if (key !== "howThisWasMadeSectionViewModel" || !isRecord(value)) return;
+    if (containsAiDisclosureHelpLink(value)) foundAiDisclosure = true;
+  });
+
+  // Requiring the requested ID alongside the disclosure prevents a label from
+  // a prefetched neighboring Short from being attributed to this card.
+  if (foundAiDisclosure) return foundTargetVideo ? "ai" : "unknown";
+  return initialData.status === "REEL_ITEM_WATCH_STATUS_SUCCEEDED" ? "not-ai" : "unknown";
+}
+
 export function extractInitialData(html: string): unknown | null {
   for (const marker of INITIAL_DATA_MARKERS) {
     let markerIndex = html.indexOf(marker);

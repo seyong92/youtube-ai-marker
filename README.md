@@ -1,14 +1,14 @@
 # YouTube AI Marker
 
-A privacy-first Chrome extension that marks, blurs, or hides regular YouTube videos when YouTube officially discloses them as **Made with AI**.
+A privacy-first Chrome extension that marks, blurs, or hides YouTube videos and Shorts when YouTube officially discloses them as **Made with AI**.
 
 The extension does not attempt to detect AI content itself. Unknown or unrecognized videos are always shown.
 
 ## Current scope
 
 - Desktop `youtube.com`
-- Home, search, subscriptions, channel video grids, and watch-page recommendations
-- Regular videos only; Shorts, mobile web, and embeds are intentionally excluded
+- Home, search, subscriptions, channel grids, watch-page recommendations, and desktop Shorts shelves
+- Regular video and Shorts cards; mobile web, embeds, and the active Shorts player are excluded
 - Local-only settings and decision cache; no server or telemetry
 
 ## Install in Chrome developer mode
@@ -32,7 +32,7 @@ npm run build
 
 ## How classification works
 
-For cards near the viewport, the extension fetches the corresponding YouTube watch page with the existing browser session. It parses YouTube's structured initial page data and only returns a positive result when a `howThisWasMadeSectionViewModel` contains YouTube's official AI disclosure help article identifier (`15447836`).
+For cards near the viewport, the extension fetches the corresponding YouTube watch or Shorts page with the existing browser session. It parses YouTube's structured initial page data and only returns a positive result when a `howThisWasMadeSectionViewModel` contains YouTube's official AI disclosure help article identifier (`15447836`). For Shorts, the disclosure must also be paired with the exact requested video ID so a prefetched neighboring Short cannot cause a false positive.
 
 This is an undocumented YouTube web response, so it can change. The parser is isolated in `src/content/disclosure-adapter.ts`, response failures are treated as unknown, and unknown videos are never filtered.
 

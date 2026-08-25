@@ -19,7 +19,8 @@
 
 .yam-ai-blurred ytd-thumbnail img,
 .yam-ai-blurred a#thumbnail img,
-.yam-ai-blurred .yt-lockup-view-model__content-image img {
+.yam-ai-blurred .yt-lockup-view-model__content-image img,
+.yam-ai-blurred a.reel-item-endpoint[href*="/shorts/"] img {
   filter: blur(16px) brightness(0.68);
   transform: scale(1.04);
 }

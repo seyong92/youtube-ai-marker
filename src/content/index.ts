@@ -1,7 +1,7 @@
 import { cacheStatus, getCachedStatus, getSettings, isSettingsChange } from "../shared/storage";
 import type { DisclosureStatus, FilterMode, PageStats } from "../shared/types";
 import { discoverVideoCards, findThumbnail, type VideoCard } from "./cards";
-import { classifyWatchHtml } from "./disclosure-adapter";
+import { classifyShortsHtml, classifyWatchHtml } from "./disclosure-adapter";
 import { RequestQueue } from "./request-queue";
 
 const queue = new RequestQueue(3);
@@ -18,7 +18,10 @@ const intersectionObserver = new IntersectionObserver((entries) => {
     intersectionObserver.unobserve(entry.target);
     const card = entry.target as HTMLElement;
     const videoId = card.dataset.yamVideoId;
-    if (videoId) void classifyAndRender({ element: card, videoId });
+    const kind = card.dataset.yamMediaKind;
+    if (videoId && (kind === "video" || kind === "short")) {
+      void classifyAndRender({ element: card, videoId, kind });
+    }
   }
 }, { rootMargin: "600px 0px" });
 
@@ -55,7 +58,8 @@ async function initialize(): Promise<void> {
 
 function scan(root: ParentNode): void {
   for (const card of discoverVideoCards(root)) {
-    if (card.element.dataset.yamVideoId === card.videoId) {
+    if (card.element.dataset.yamVideoId === card.videoId
+      && card.element.dataset.yamMediaKind === card.kind) {
       if (card.element.dataset.yamStatus === "ai") ensureBadge(card.element);
       continue;
     }
@@ -63,6 +67,7 @@ function scan(root: ParentNode): void {
     card.element.classList.remove("yam-ai-card", "yam-ai-blurred", "yam-ai-hidden");
     card.element.querySelector(".yam-ai-badge")?.remove();
     card.element.dataset.yamVideoId = card.videoId;
+    card.element.dataset.yamMediaKind = card.kind;
     delete card.element.dataset.yamStatus;
     intersectionObserver.observe(card.element);
   }
@@ -76,42 +81,50 @@ async function classifyAndRender(card: VideoCard): Promise<void> {
   } catch {
     failedRequests += 1;
   }
-  const status = cached ?? await getOrCreateRequest(card.videoId);
-  if (card.element.dataset.yamVideoId !== card.videoId) return;
+  const status = cached ?? await getOrCreateRequest(card);
+  if (card.element.dataset.yamVideoId !== card.videoId
+    || card.element.dataset.yamMediaKind !== card.kind) return;
   cardStatus.set(card.element, status);
   card.element.dataset.yamStatus = status;
   render(card.element, status);
   recount();
 }
 
-function getOrCreateRequest(videoId: string): Promise<DisclosureStatus> {
-  const existing = inFlight.get(videoId);
+function getOrCreateRequest(card: VideoCard): Promise<DisclosureStatus> {
+  const requestKey = `${card.kind}:${card.videoId}`;
+  const existing = inFlight.get(requestKey);
   if (existing) return existing;
 
   const request = queue.run(async () => {
     try {
-      const response = await fetch(`/watch?v=${encodeURIComponent(videoId)}&hl=en`, {
+      const path = card.kind === "short"
+        ? `/shorts/${encodeURIComponent(card.videoId)}?hl=en`
+        : `/watch?v=${encodeURIComponent(card.videoId)}&hl=en`;
+      const response = await fetch(path, {
         credentials: "same-origin",
       });
       if (!response.ok) throw new Error(`YouTube returned ${response.status}`);
-      const status = classifyWatchHtml(await response.text());
+      const html = await response.text();
+      const status = card.kind === "short"
+        ? classifyShortsHtml(html, card.videoId)
+        : classifyWatchHtml(html);
       if (status === "unknown") failedRequests += 1;
-      await cacheStatus(videoId, status);
+      await cacheStatus(card.videoId, status);
       return status;
     } catch {
       failedRequests += 1;
       try {
-        await cacheStatus(videoId, "unknown");
+        await cacheStatus(card.videoId, "unknown");
       } catch {
         // Storage failures must never prevent the fail-open result.
       }
       return "unknown";
     } finally {
-      inFlight.delete(videoId);
+      inFlight.delete(requestKey);
     }
   });
 
-  inFlight.set(videoId, request);
+  inFlight.set(requestKey, request);
   return request;
 }
 
